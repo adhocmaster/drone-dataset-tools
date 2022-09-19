@@ -32,12 +32,31 @@ def get_path_dict(folder_path):
             id = '0' + str(i)
         else:
             id = str(i)
-        image_name =  os.path.join(folder_path, id + image_id)
-        recordingMeta_name = os.path.join(folder_path, id + meta_id)
-        tracksMeta_name = os.path.join(folder_path, id + track_meta_id)
-        tracks_name = os.path.join(folder_path, id + track_id)
+        image_path =  os.path.join(folder_path, id + image_id)
+        recordingMeta_path = os.path.join(folder_path, id + meta_id)
+        tracksMeta_path = os.path.join(folder_path, id + track_meta_id)
+        tracks_path = os.path.join(folder_path, id + track_id)
 
-        path_object = HighD(id, image_name, recordingMeta_name, tracksMeta_name, tracks_name)
+        path_object = {
+            'image_path': image_path,
+            'recordingMeta_path': recordingMeta_path,
+            'tracksMeta_path': tracksMeta_path,
+            'tracks_path': tracks_path
+        }
 
         path_dict[i] = path_object
+    
+    # print(path_dict)
+
     return path_dict
+
+def read_highD_data(id, path_dict, outputDir):
+    
+    highD_data = HighD(id, 
+                       path_dict[id]['image_path'], 
+                       path_dict[id]['recordingMeta_path'], 
+                       path_dict[id]['tracksMeta_path'], 
+                       path_dict[id]['tracks_path'],
+                       outputDir)
+
+    return highD_data
