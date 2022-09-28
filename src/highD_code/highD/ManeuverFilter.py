@@ -211,6 +211,7 @@ def find_lane_changes(meta_data, data):
 
 
 def get_lane_change_trajectory(meta_data, data):
+    
     y_accel_car_LC = []
     y_accel_truck_LC = []
     y_accel_car_noLC = []
@@ -229,7 +230,7 @@ def get_lane_change_trajectory(meta_data, data):
         vtype = meta_data[ego_id].get('class')
         if n_lc > 0:
             # this vehicle changes lane
-            # find lane change index
+            # find lane change frame index
             LC_index = []
             totalFrames = len(data[i].get('laneId'))
             lane_ids = list(data[i].get('laneId'))

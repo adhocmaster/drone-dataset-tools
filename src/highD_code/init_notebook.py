@@ -1,5 +1,7 @@
 import os, sys
-from HighD import HighD
+# from HighD import HighD
+
+from highD.HighD import HighD
 
 currentFolder = os.path.abspath('')
 try:
@@ -60,3 +62,21 @@ def read_highD_data(id, path_dict, outputDir):
                        outputDir)
 
     return highD_data
+
+
+def read_full_dataset(id_list, dataDir, outputDir):
+    
+    highD_list = []
+
+    for id in id_list:
+        if id < 1 or id > 60:
+            print('id must be between 1 and 60')
+            return
+        path_dict = get_path_dict(dataDir)
+        highD_data = read_highD_data(id, path_dict, outputDir)
+        highD_list.append(highD_data)
+
+    return highD_list
+
+
+
