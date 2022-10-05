@@ -5,3 +5,4 @@ data/
 *.mp4
 output/*
 recycleBin.txt
+src/highD_code/dill/*
