@@ -119,13 +119,13 @@ class HighD:
 
 
 
-    def filter_lane_change(self):
-        self.lane_change = get_lane_change_trajectory(self.tracksMeta_dict, self.track_dict)
-        return self.lane_change
+    # def filter_lane_change(self):
+    #     self.lane_change = get_lane_change_trajectory(self.tracksMeta_dict, self.track_dict)
+    #     return self.lane_change
 
-    def lane_change_stats(self):
-        result = find_lane_changes(self.tracksMeta_dict, self.track_dict)
-        return result
+    # def lane_change_stats(self):
+    #     result = find_lane_changes(self.tracksMeta_dict, self.track_dict)
+    #     return result
 
 
 #     def split_dataset(self):

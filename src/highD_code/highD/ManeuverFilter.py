@@ -11,6 +11,8 @@ LC_MARGIN_SECOND = 5
 LC_MARGIN_FRAMES = int(LC_MARGIN_SECOND/TIME_STEP)
 TTC_STAR = 3
 
+
+
 def find_car_following(meta_data, 
                        data, 
                        ego_type, 
