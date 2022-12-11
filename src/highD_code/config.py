@@ -3,13 +3,13 @@
 
 # Directory of the project (path for the highD_code folder)
 # PROJECT_DIR = 'C:\\Users\\abjaw\\Documents\\GitHub\\drone-dataset-tools\\src\\highD_code'
-PROJECT_DIR = 'C:/Users/abjaw/Documents/GitHub/drone-dataset-tools/src/highD_code'
+PROJECT_DIR = 'C:/Users/abjawad/Documents/GitHub/drone-dataset-tools/src/highD_code'
 
 # Path for the HighD dataset  
-DATA_DIRECTORY = "C:/Users/abjaw/Documents/GitHub/drone-dataset-tools/data/highD_dataset"
+DATA_DIRECTORY = "C:/Users/abjawad/Documents/GitHub/drone-dataset-tools/data/highD_dataset"
 
 # Path for the output directory
-OUTPUT_DIRECTORY = "C:/Users/abjaw/Documents/GitHub/drone-dataset-tools/data/highD_dataset"
+OUTPUT_DIRECTORY = "C:/Users/abjawad/Documents/GitHub/drone-dataset-tools/data/highD_dataset"
 
 # dillDir = "C:/Users/abjaw/Documents/GitHub/drone-dataset-tools/output/dill"
 # outputDir = "C:/Users/abjaw/Documents/GitHub/drone-dataset-tools/output"
