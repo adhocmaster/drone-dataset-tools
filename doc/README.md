@@ -1,126 +1,78 @@
-# Drone-Dataset Tools
+# Pedestrian trajectory extraction and processing
+
+This tool provides extraction and processing scripts for jaywalker trajectories. It currently extracts data from InD dataset. But the approach can be used for any BEV dataset.
+
+## Architecture & Tutorials
+1. [Methodology for Extraction](extractors-methodology.md) 
+2. [Quick start](how-to-use.md)
+3. [Extractors](extractors.md)
+4. [Visualization tools](visualization.md)
+5. [Threads to validity](threats-to-validity.md)
+
+## Goal
+
+The raw dataset has pedestrian and vehicle trajectories. The following figure shows the pedestrian trajectories. The goal of this project is to extract pedestrians that cross the road and clip their trajectories to the interesting zone only. 
+<img src="./images/location2-raw.PNG" width="600">
+
+In the following figures, the purple ones are complete trajectories and the blue ones are clipped to the crossing area of the road.
+<img src="./images/location-2-scene-10-all.PNG" width="600">
+<img src="./images/location-2-scene-21-all.PNG" width="600">
 
 
-The goal of this repository is to make using [drone datasets](https://www.drone-dataset.com/) as easy as possible. 
-Therefore, we provide source code in Python for import and visualization. 
-Thus, this source code not only allows to visualize trajectories and thus get an overview, but also serves as a template for your own projects.
 
-## Extractor documentation:
-Read the documentation [here](./extractors/README.md) for the extractor API.
-Read the documentation [here](./tools/README.md) for the extractor API.
-## Installation and Quick Start
+## Scene coordinate system:
+<img src="./images/scene-coordinate-system.PNG" width="600">
 
-1. Create a new Python environment or select a pre-existing one. 
-   This code is tested with Python 3.6, but is very probably compatible with newer releases of Python.
+The original data has position and dynamics in the image coordinate system which is the top-left pixel of the background image. Our extracted data transforms trajectories into scene coordinate system where the origin is at the center of the scene bounding box and x axis is rotated counter-clockwise to aligh with the road reference line (length).
 
-   If you use Anaconda3, this can be done as follows:
-   ```shell 
-   conda create --name drone-dataset-tools36 python=3.6
-   conda activate drone-dataset-tools36
-   ```
+So, our scene data looks like this (plotted in the image coordinate system)
+<img src="./images/scene-data.PNG" width="600">
 
-2. Install required packages by navigating to the root directory and using
-    ```shell 
-    pip3 install -r requirements.txt
-    ```
-3. To run the visualization tool, first, navigate to the `src/` directory
-   ```shell
-   cd src
-   ```
-4. Then to visualize e.g. *recording 26* from the *exiD dataset*, either copy the content of the dataset's `data/` directory into the `data/` subdirectory of this repository and use
-   ```shell
-   python3 run_track_visualization.py --dataset exid --recording 26
-   ```
-   or you can skip the data copying and directly provide the path to the dataset's `data/` directory by using the `--dataset_dir` command line option:
-   ```shell
-   python3 run_track_visualization.py --dataset_dir /<path/to>/exiD-dataset-v1.2/data/ --dataset exid --recording 26
-   ```
-   See below for further explanations.
+## Issues with the data
+The dataset is annotated by a model trained with a deep learning object tracking method. So, it sometimes fail to classify and track objects correctly. Our exploratory analysis discovered some issues with the dataset:
 
-## Importer
-### tracks_import.py
-This module allows to import the tracks, tracks meta info and recording meta info for a single recording 
-(`read_from_csv(tracks_file, tracks_meta_file, recordings_meta_file)`)
-or for all recordings (`read_all_recordings_from_csv(base_path)`).
+1. Unrealistic paths - there are long pedestrian trajectories that run along the road (over 50 meters). There is a high probability that bicyles or scooters are classified as pedestrians.
+2. Unrealistic speed - Some pedestrians seems to be too fast. Interestingly, then can run as fast as 30 km/h which professional atheletes or sprintters can achieve on track or in the field. We re-labeled them as fast_pedestrian as they interact with other traffic participants.
+3. Incomplete trajectories - Pedestrians can pop up or vanish in the middle of the road. This happens when tracking fails. In the following example we have a trajectory that was both started and ended in the middle of the road. We cannot simply omit these trajectories as they interact with other trajectories.
+
+<img src="./images/incomplete-trajectory.PNG" width="600">
+
+## Interesting Patterns in midblocks
+1. Sharpe and unpredictable change in direction
+2. Lateral displacement is significant
+3. Wide variety of patterns in the paths.
+
+<img src="./images/incomplete-trajectory.PNG" width="600">
+
+## Derived Data
+
+**Additional attributes for track**
+
+| Attribute | Description |
+| --- | ------ |
+| uniqueTrackId | Unique track identifier in a location. First two digits denote the recordingId and last three digits denote the trackId in the recording. |
+| sceneId | Every scene in a location has a sceneId |
+| roadWidth | Approximate road width along the scene y-axis |
+| sceneX | track x position in the scene coordinate system |
+| sceneY | track y position in the scene coordinate system |
+
+**Scene meta data**
+
+The meta data is developed in clipped trajectories in the scene coordinate system.
+
+| Attribute | Description |
+| --- | ------ |
+| uniqueTrackId | Unique track identifier in a location. First two digits denote the recordingId and last three digits denote the trackId in the recording. |
+| initialFrame | starting frame in the recording |
+| finalFrame |  ending frame in the recording  |
+| numFrames | Life span in frames. Depends on the FPS of the data. |
+| class | type of the actor |
+| horizontalDirection | Positive x is EAST |
+| verticalDirection | Positive y is NORTH |
 
 
-## Visualizer
-The visualizer imports the data and visualizes them on an image of the recording site.
-The user may visualize specific frames or just playback the recorded tracks. In addition, information like the track id or speeds may be displayed (see "Command-line Options"). 
-By clicking on track, a separate window is created with plots of the clicked track's positions, headings, velocities and accelerations.
+## Application
+1. Trajectory inpainting or forking - helps the partial trajectories recorded in dashcams.
+2. Scenario reconstruction and dataset augmentation
+3. Generative behavior modeling
 
-Each road user class has its own color: cars are light blue, vans are purple, buses are orange, trucks are orange, pedestrians are red, 
-bicycles are yellow and motorcycles are yellow.
-
-The following shortcuts are currently implemented:
-
-| Keyboard Shortcut | Description |
-| ---           | --- |
-| space         | Play/Stop the playback |
-| right arrow   | Jump to previous frame |
-| left arrow    | Jump to next frame |
-
-!["Screenshot of track visualization"](doc/screenshot_track_visualization.png "Screenshot of track visualization")
-
-### Command-line Options
-The command-line options can be used when starting the `run_track_visualization.py` script. 
-For example, run the following command from 
-the `src` directory to start the visualization of recording 26.
-```shell
-python3 run_track_visualization.py --dataset exid --recording 26 
-```
-
-All available options are listed in the following table:
-
-| Command-line Options      | Default value   | Description |
-| ---                       | ---             | --- |
-| `--help`                    | -               | Show this help message. |
-| `--dataset_dir`             | `"../data/"`      | Path to directory that contains the dataset csv files. |
-| `--dataset`                 | `exid` | Name of the dataset (ind, round, exid, unid). Needed to apply dataset specific visualization adjustments. |
-| `--recording`               | `26`            | Name of the recording given by a number with a leading zero. | 
-| `--playback_speed`          | `4`               | During playback, only consider every nth frame. | 
-| `--show_bounding_box`       | `False`           | Plot the rotated bounding boxes of all vehicles.  Please note, that for vulnerable road users, no bounding box is given. |  
-| `--show_orientation`        | `False`           | Indicate the orientation of all vehicles by triangles. | 
-| `--show_trajectory`         | `False`           | Show the trajectory up to the current frame for every track. | 
-| `--show_future_trajectory`  | `False`           | Show the remaining trajectory for every track. | 
-| `--annotate_track_id`       | `False`           | Annotate every track by its id. | 
-| `--annotate_class`          | `False`           | Annotate every track by its class label. | 
-| `--annotate_speed`          | `False`           | Annotate every track by its current speed. | 
-| `--annotate_orientation`    | `False`           | Annotate every track by its current orientation. | 
-| `--annotate_age`            | `False`           | Annotate every track by its current age. | 
-| `--show_maximized`          | `False`           | Show the track Visualizer maximized. Might affect performance. | 
-| `--ped_only`                | `False`           | Only render frames with pedestrians and a button to jump to the next pedestrian's initial frame. | 
-
-*Please note that drawing additional features may decrease the playback animation update rate.*
-
-## Citation
-
-If you use one of our datasets or these scripts in your work, please cite our datasets as follows:
-### inD Paper
-```
-@INPROCEEDINGS{inDdataset,
-               title={The inD Dataset: A Drone Dataset of Naturalistic Road User Trajectories at German Intersections},
-               author={Bock, Julian and Krajewski, Robert and Moers, Tobias and Runde, Steffen and Vater, Lennart and Eckstein, Lutz},
-               booktitle={2020 IEEE Intelligent Vehicles Symposium (IV)},
-               pages={1929-1934},
-               year={2019},
-               doi={10.1109/IV47402.2020.9304839}}
-```
-### rounD Paper
-```           
-@INPROCEEDINGS{rounDdataset,
-               title={The rounD Dataset: A Drone Dataset of Road User Trajectories at Roundabouts in Germany},
-               author={Krajewski, Robert and Moers, Tobias and Bock, Julian and Vater, Lennart and Eckstein, Lutz},
-               booktitle={2020 IEEE 23rd International Conference on Intelligent Transportation Systems (ITSC)},
-               year={2020},
-               doi={10.1109/ITSC45102.2020.9294728}}
-```
-
-### exiD Paper
-```
-@inproceedings{exiDdataset,
-               title={The exiD Dataset: A Real-World Trajectory Dataset of Highly Interactive Highway Scenarios in Germany},
-               author={Moers, Tobias and Vater, Lennart and Krajewski, Robert and Bock, Julian and Zlocki, Adrian and Eckstein, Lutz},
-               booktitle={2022 IEEE Intelligent Vehicles Symposium (IV)},
-               year={2022}}
-```

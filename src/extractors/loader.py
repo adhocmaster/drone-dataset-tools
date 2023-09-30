@@ -4,6 +4,8 @@ from os import path, listdir
 import logging
 
 from sortedcontainers import SortedList
+
+from .config import FPS
 from .RecordingData import RecordingData
 from .LocationData import LocationData
 
@@ -55,14 +57,20 @@ class Loader:
         #     if rMeta["locationId"] == locationId:
         #         ids.append(rMeta["recordingId"])
         # return ids
-        return self.locationToRecordingIds[locationId]
+        recordingIds = self.locationToRecordingIds[locationId]
+        # recordingIds = recordingIds[:1] # TODO for testing
+        # recordingIds = [25]
+        return recordingIds
     
 
     def getBackgroundImagePath(self, recordingId):
-        return path.join(self.directory, f'{recordingId}_background.png')
+        # append a 0 because recordingId is fixed to two digits
+        recordingId = int(recordingId)
+        recordingId = recordingId if recordingId > 9 else f'0{recordingId}'
+        return path.join(self.directory, f'{recordingId}_background.png') 
     
 
-    def getRecordingData(self, recordingId):
+    def getRecordingData(self, recordingId, downSampleFps=FPS):
         """_summary_
 
         Args:
@@ -81,9 +89,11 @@ class Loader:
         tracksMetaDf = pd.read_csv(tMetaFile)
         tracksDf = pd.read_csv(tracksFile)
 
-        self.addUniqueTrackIds(tracksDf)      
+        self.addUniqueTrackIds(tracksDf)    
+        backgroundImagePath = self.getBackgroundImagePath(recordingId)
 
-        return RecordingData(recordingId, recordingMeta, tracksMetaDf, tracksDf)
+
+        return RecordingData(recordingId, recordingMeta, tracksMetaDf, tracksDf, backgroundImagePath, downSampleFps=downSampleFps)
 
         # return tracksDf, tracksMetaDf, recordingMeta
 
@@ -135,12 +145,22 @@ class Loader:
         pass
 
 
-    def getLocationData(self, locationId):
-        recordingIds = self.getRecordingIdsOfALocation(locationId)
+    def getLocationData(self, locationId, useSceneConfigToExtract=False, precomputeSceneData=True, recordingIds=None, downSampleFps=FPS):
+        if recordingIds is None:
+            recordingIds = self.getRecordingIdsOfALocation(locationId)
         logging.info(f"recordingIds: {recordingIds}")
-        recordingDataList = [self.getRecordingData(rId) for rId in recordingIds]
+        recordingDataList = [self.getRecordingData(rId, downSampleFps=downSampleFps) for rId in recordingIds]
         self.validateLocationRecordingMeta()
-        return LocationData(locationId, recordingIds, recordingDataList)
+
+        return LocationData(
+            locationId = locationId, 
+            recordingIds = recordingIds, 
+            recordingDataList = recordingDataList, 
+            fps = downSampleFps,
+            useSceneConfigToExtract = useSceneConfigToExtract,
+            backgroundImagePath = self.getBackgroundImagePath(recordingIds[0]),
+            precomputeSceneData=precomputeSceneData
+        )
 
     
 
