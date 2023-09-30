@@ -5,9 +5,24 @@ The goal of this repository is to make using [drone datasets](https://www.drone-
 Therefore, we provide source code in Python for import and visualization. 
 Thus, this source code not only allows to visualize trajectories and thus get an overview, but also serves as a template for your own projects.
 
-## Extractor documentation:
+# Extractor documentation:
 Read the documentation [here](./doc/extractors.md) for the extractor API.
 Read the documentation [here](./doc/visualization.md) for the visualization API..
+
+## Citation
+
+If you use this Crossing Dataset Extractor, you need to cite both our tool paper and inD paper
+### inD Paper
+```
+@INPROCEEDINGS{inDdataset,
+               title={The inD Dataset: A Drone Dataset of Naturalistic Road User Trajectories at German Intersections},
+               author={Bock, Julian and Krajewski, Robert and Moers, Tobias and Runde, Steffen and Vater, Lennart and Eckstein, Lutz},
+               booktitle={2020 IEEE Intelligent Vehicles Symposium (IV)},
+               pages={1929-1934},
+               year={2019},
+               doi={10.1109/IV47402.2020.9304839}}
+```
+
 
 ## Installation and Quick Start
 
@@ -112,4 +127,4 @@ If you use this Crossing Dataset Extractor, you need to cite both our tool paper
                year={2019},
                doi={10.1109/IV47402.2020.9304839}}
 ```
-```
+
