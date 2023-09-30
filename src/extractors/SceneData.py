@@ -114,6 +114,9 @@ class SceneData:
             self._isLocalTransformationDone = False
             self._isLocalInfomationBuilt = False
 
+        # comment later
+        # self._isLocalTransformationDone = False
+        # self._isLocalInfomationBuilt = False
 
         if self._isLocalInfomationBuilt:
             return
@@ -138,6 +141,7 @@ class SceneData:
         idsBefore = self.uniqueClippedPedIds()
         
         logging.info(f"Scene {self.sceneId}: clipping trimmed data")
+        # print("here", self.CROSSING_CLIP_OFFSET_AFTER_DYNAMICS)
         self._clipPed(crossingOffset = self.CROSSING_CLIP_OFFSET_AFTER_DYNAMICS, onFull=False) # another pass as we had bigger offset to calculate dynamics
         idsAfter = self.uniqueClippedPedIds()
 
@@ -475,6 +479,7 @@ class SceneData:
                 return []
 
             trackId = trackDf.head(1)["uniqueTrackId"].iloc[0]
+
             validClips = []
 
             if len(trackDf) < 3: 
@@ -519,8 +524,9 @@ class SceneData:
     def _clipPed(self, crossingOffset, onFull = True, ids=None):
         
         logger.debug("clipping trajectories")
+
         scenePolygon = TrajectoryUtils.scenePolygon(
-            self.sceneConfig, self.sceneConfig["boxWidth"], self.sceneConfig["roadWidth"] + crossingOffset)
+            self.sceneConfig, self.sceneConfig["boxWidth"] + BOX_WIDTH_OFFSET, self.sceneConfig["roadWidth"] + crossingOffset)
 
         # logging.info(f"clipping trajectories with scene polygon {scenePolygon}")
         if ids is None:
@@ -627,6 +633,7 @@ class SceneData:
 
     def getClippedPedDfs(self):
         if self._clippedPedData is None:
+            # TO-DO: will replace CROSSING_CLIP_OFFSET_BEFORE_DYNAMICS with self.CROSSING_CLIP_OFFSET_BEFORE_DYNAMICS
             self._clipPed(crossingOffset = self.CROSSING_CLIP_OFFSET_BEFORE_DYNAMICS)
 
         return self._clippedPedData
