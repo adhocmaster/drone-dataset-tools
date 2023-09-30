@@ -10,6 +10,17 @@ Read the documentation [here](./doc/visualization.md) for the visualization API.
 ## Citation
 
 If you use this Crossing Dataset Extractor, you need to cite both our tool paper and inD paper
+### indPedCrossing Paper
+```
+@unknown{indPedCrossing,
+author = {Muktadir, Golam Md and Ikram, Zarif and Whitehead, Jim},
+year = {2023},
+month = {09},
+pages = {},
+title = {Pedestrian Crossing Dataset Extraction From InD Dataset},
+doi = {10.13140/RG.2.2.28903.62880}
+}
+```
 ### inD Paper
 ```
 @INPROCEEDINGS{inDdataset,
