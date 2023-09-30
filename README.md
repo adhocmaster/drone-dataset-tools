@@ -1,4 +1,4 @@
-# Drone-Dataset Extractor Tools
+# inD Drone-Dataset Extractor Tools
 
 The goal of this repository is to extract pedestrin crossing trajectories (and related trajectories) from [drone datasets](https://www.drone-dataset.com/) as easy as possible. 
 
