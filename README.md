@@ -101,7 +101,7 @@ All available options are listed in the following table:
 
 ## Citation
 
-If you use one of our datasets or these scripts in your work, please cite our datasets as follows:
+If you use this Crossing Dataset Extractor, you need to cite both our tool paper and inD paper
 ### inD Paper
 ```
 @INPROCEEDINGS{inDdataset,
@@ -112,23 +112,4 @@ If you use one of our datasets or these scripts in your work, please cite our da
                year={2019},
                doi={10.1109/IV47402.2020.9304839}}
 ```
-### rounD Paper
-```           
-@INPROCEEDINGS{rounDdataset,
-               title={The rounD Dataset: A Drone Dataset of Road User Trajectories at Roundabouts in Germany},
-               author={Krajewski, Robert and Moers, Tobias and Bock, Julian and Vater, Lennart and Eckstein, Lutz},
-               booktitle={2020 IEEE 23rd International Conference on Intelligent Transportation Systems (ITSC)},
-               year={2020},
-               doi={10.1109/ITSC45102.2020.9294728}}
-```
-
-### exiD Paper
-```
-@inproceedings{exiDdataset,
-               title={The exiD Dataset: A Real-World Trajectory Dataset of Highly Interactive Highway Scenarios in Germany},
-               author={Moers, Tobias and Vater, Lennart and Krajewski, Robert and Bock, Julian and Zlocki, Adrian and Eckstein, Lutz},
-               booktitle={2022 IEEE Intelligent Vehicles Symposium (IV)},
-               pages={958-964},
-               year={2022},
-               doi={10.1109/IV51971.2022.9827305}}
 ```
